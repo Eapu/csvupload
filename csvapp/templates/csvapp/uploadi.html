@@ -1,0 +1,82 @@
+{% extends "shop/base.html" %}
+   {% load static %}
+   {% block title %}
+     Lista de compra
+   {% endblock %}
+   {% block content %}
+
+<br></br>   
+  <table>
+<thead> <tr>
+<th>Producto</th>
+           <th>Descripción</th>
+
+           <th>Cantidad</th>
+          <th> Renovar  </th>
+          <th>   </th>
+
+           <th>Borrar</th>
+
+
+         </tr>
+       </thead>
+       <tbody>
+         {% for item in cart %}
+           {% with product=item.product %}
+             <tr>
+               
+               <td>{{ product.name }}</td>
+              <td> {{ product.description|linebreaks }}</td>
+
+               <td>
+     <form action="{% url "cart:cart_add" product.id %}" method="post">
+       {{ item.update_quantity_form.quantity }}</td><td>
+       {{ item.update_quantity_form.update }}
+       
+<div class="circle">
+   <button type="submit" class="submit-with-icon">
+     <span class="glyphicon glyphicon-refresh"></span>
+   </button>
+</div>
+      {% csrf_token %}
+     </form>
+   </td>               <td></td>
+
+        <td><a href="{% url "cart:cart_remove" product.id %}">Borrar</a></td>
+             </tr>
+           {% endwith %}
+         {% endfor %}
+         
+       </tbody>
+     </table>     <br></br>
+
+     <p class="text-left">
+       <a href="{% url "shop:product_list" %}" class="btn btn-default">Seguir comprando</a>
+       <a href="{% url "orders:order_create" %}" class="btn btn-default">
+     Tramitar</a>
+      
+     </p>
+     <br></br>
+     <script>
+
+
+(function($){
+
+  window.onbeforeunload = function(e){    
+        window.name += ' [' + $(window).scrollTop().toString() + '[' + $(window).scrollLeft().toString();
+  };
+  
+  $.maintainscroll = function() {
+    if(window.name.indexOf('[') > 0)
+    {
+      var parts = window.name.split('[');     
+      window.name = $.trim(parts[0]);
+      window.scrollTo(parseInt(parts[parts.length - 1]), parseInt(parts[parts.length - 2]));
+    }   
+  };  
+  $.maintainscroll();
+})(jQuery);
+
+
+</script>
+   {% endblock %}

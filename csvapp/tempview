@@ -1,0 +1,40 @@
+from django.shortcuts import render
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.urlresolvers import reverse
+import csv
+def upload_csv(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        data = csv.reader(open(myfile + '.csv'), delimiter = ',')
+        f = open('csv2kml.kml', 'w')
+        f.write("<?xml version='1.0' encoding='UTF-8'?>\n")
+        f.write("<kml xmlns='http://earth.google.com/kml/2.1'>\n")
+        f.write("<Document>\n")
+        f.write("   <name>" + fname + '.kml' +"</name>\n")
+        for row in data:
+            f.write("   <Placemark>\n")
+            f.write("       <name>" + str(row[1]) + "</name>\n")
+            f.write("       <description>" + str(row[3]) + "</description>\n")
+            f.write("       <Point>\n")
+            f.write("           <coordinates>" + str(row[10]) + "," + str(row[11]) + "," + str() + "</coordinates>\n")
+            f.write("       </Point>\n")
+            f.write("   </Placemark>\n")
+            f.write("</Document>\n")
+            f.write("</kml>\n")
+            print ("File Created. ")
+            print ("Press ENTER to exit. ")
+            input()
+            f.close()
+        return render(request, 'csvapp/upload_csv.html', {
+            'uploaded_file_url': uploaded_file_url
+        })
+
+    
+
+    return render(request, 'csvapp/upload_csv.html')
+
+
